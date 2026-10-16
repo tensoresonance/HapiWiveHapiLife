@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>靚靚老婆跟進站</title>
+
+  <style>
+    :root {
+      --pink: #ff7198;
+      --pink-dark: #db4f79;
+      --pink-light: #fff0f5;
+      --purple: #a777e3;
+      --yellow: #ffd978;
+      --green: #71c9a4;
+      --red: #ea5c69;
+      --white: #ffffff;
+      --text: #4b3f48;
+      --muted: #84747e;
+      --border: #f0dce4;
+      --shadow: 0 10px 30px rgba(177, 91, 124, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, #ffe4ee 0, transparent 25%),
+        radial-gradient(circle at 90% 20%, #eee3ff 0, transparent 25%),
+        #fff9fb;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "PingFang HK",
+        "Noto Sans TC",
+        "Microsoft JhengHei",
+        sans-serif;
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* 登入畫面 */
+
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      width: min(100%, 430px);
+      padding: 38px 28px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.94);
+      border: 2px solid white;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .login-emoji {
+      font-size: 4rem;
+    }
+
+    .login-card h1 {
+      margin: 12px 0 8px;
+      color: var(--pink-dark);
+    }
+
+    .login-card p {
+      color: var(--muted);
+    }
+
+    .google-button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px 18px;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      border: 0;
+      border-radius: 16px;
+      box-shadow: 0 8px 18px rgba(219, 79, 121, 0.22);
+    }
+
+    .login-error {
+      margin-top: 16px;
+      padding: 12px;
+      color: #a52636;
+      background: #ffe7ea;
+      border-radius: 12px;
+    }
+
+    /* 網站頂部 */
+
+    .hero {
+      padding: 32px 18px 48px;
+      color: white;
+      background: linear-gradient(135deg, #ff7ba2, #a77be8);
+      border-radius: 0 0 36px 36px;
+    }
+
+    .hero-inner {
+      width: min(100%, 1050px);
+      margin: auto;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .hero h1 {
+      margin: 20px 0 5px;
+      font-size: clamp(2rem, 7vw, 3.7rem);
+    }
+
+    .hero p {
+      margin: 5px 0;
+      opacity: 0.95;
+    }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .user-photo {
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+      background: white;
+      border: 2px solid white;
+      border-radius: 50%;
+    }
+
+    .signout-button {
+      padding: 8px 12px;
+      color: white;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+    }
+
+    /* 主要內容 */
+
+    main {
+      width: min(calc(100% - 28px), 1050px);
+      margin: -25px auto 70px;
+    }
+
+    .panel {
+      padding: 22px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      padding: 17px 10px;
+      text-align: center;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--pink-dark);
+      font-size: 1.8rem;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 180px auto;
+      gap: 10px;
+      margin-bottom: 23px;
+    }
+
+    .field {
+      width: 100%;
+      padding: 12px 14px;
+      color: var(--text);
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      outline: none;
+    }
+
+    .field:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(255, 113, 152, 0.12);
+    }
+
+    .primary-button {
+      padding: 12px 18px;
+      color: white;
+      font-weight: 800;
+      white-space: nowrap;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      border: 0;
+      border-radius: 13px;
+      box-shadow: 0 7px 16px rgba(219, 79, 121, 0.2);
+    }
+
+    /* 分類按鈕 */
+
+    .category-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 22px;
+      padding-bottom: 4px;
+      overflow-x: auto;
+    }
+
+    .category-button {
+      padding: 8px 13px;
+      color: var(--text);
+      white-space: nowrap;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+
+    .category-button.active {
+      color: white;
+      background: var(--pink);
+      border-color: var(--pink);
+    }
+
+    /* 事項卡片 */
+
+    .task-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .task-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 5px 16px rgba(145, 88, 111, 0.07);
+    }
+
+    .task-card.done {
+      opacity: 0.67;
+      background: #faf7f8;
+    }
+
+    .task-card.done .task-title {
+      text-decoration: line-through;
+    }
+
+    .complete-button {
+      width: 31px;
+      height: 31px;
+      color: white;
+      font-weight: bold;
+      background: white;
+      border: 2px solid #e5c6d2;
+      border-radius: 50%;
+    }
+
+    .task-card.done .complete-button {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .task-title {
+      margin: 0 0 6px;
+      font-size: 1.08rem;
+    }
+
+    .task-details {
+      margin: 5px 0 10px;
+      color: var(--muted);
+      white-space: pre-wrap;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 3px 5px 3px 0;
+      padding: 4px 9px;
+      color: #81506a;
+      font-size: 0.82rem;
+      background: var(--pink-light);
+      border-radius: 999px;
+    }
+
+    .due-overdue {
+      color: var(--red);
+      background: #ffe4e7;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 7px;
+    }
+
+    .small-button {
+      padding: 7px 9px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+    }
+
+    .delete-button {
+      color: var(--red);
+    }
+
+    .empty {
+      padding: 45px 15px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-emoji {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 3rem;
+    }
+
+    /* 新增事項視窗 */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+      background: rgba(65, 43, 55, 0.45);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-card {
+      width: min(100%, 560px);
+      max-height: 90vh;
+      padding: 25px;
+      overflow-y: auto;
+      background: #fffafd;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(51, 25, 39, 0.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: var(--pink-dark);
+    }
+
+    .close-button {
+      width: 36px;
+      height: 36px;
+      font-size: 1.2rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+      margin-top: 20px;
+    }
+
+    .form-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      color: #745764;
+      font-weight: 700;
+    }
+
+    textarea.field {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    .save-button {
+      width: 100%;
+      margin-top: 17px;
+      padding: 14px;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 700px) {
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .task-card {
+        grid-template-columns: auto 1fr;
+      }
+
+      .task-actions {
+        grid-column: 2;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+
+      .user-name {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 登入畫面 -->
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-emoji">👶🏻💕</div>
+      <h1>靚靚老婆跟進站</h1>
+      <p>
+        旅行、飲湯、食飯、餐廳同各種甜蜜任務，
+        全部放埋一齊慢慢跟進。
+      </p>
+
+      <button id="loginButton" class="google-button">
+        使用 Google 登入
+      </button>
+
+      <div id="loginError" class="login-error hidden"></div>
+    </div>
+  </section>
+
+  <!-- 主網站 -->
+  <div id="app" class="hidden">
+
+    <header class="hero">
+      <div class="hero-inner">
+
+        <div class="top-row">
+          <div>💕 我哋嘅小天地</div>
+
+          <div class="user-area">
+            <img id="userPhoto" class="user-photo" alt="用戶相片">
+            <span id="userName" class="user-name"></span>
+            <button id="signoutButton" class="signout-button">
+              登出
+            </button>
+          </div>
+        </div>
+
+        <h1>👶🏻 靚靚老婆跟進站</h1>
+        <p>一齊記低，一齊完成，一齊食好西 😘</p>
+      </div>
+    </header>
+
+    <main>
+
+      <section class="panel">
+
+        <div class="stats">
+          <div class="stat">
+            <strong id="totalCount">0</strong>
+            <span>全部事項</span>
+          </div>
+
+          <div class="stat">
+            <strong id="pendingCount">0</strong>
+            <span>有待跟進</span>
+          </div>
+
+          <div class="stat">
+            <strong id="doneCount">0</strong>
+            <span>已經完成</span>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input
+            id="searchInput"
+            class="field"
+            type="search"
+            placeholder="🔍 搜尋事項、餐廳或地點"
+          >
+
+          <select id="assigneeFilter" class="field">
+            <option value="全部">所有負責人</option>
+            <option value="老公">老公負責</option>
+            <option value="老婆">老婆負責</option>
+            <option value="一齊">一齊處理</option>
+          </select>
+
+          <button id="openModalButton" class="primary-button">
+            ＋ 新增事項
+          </button>
+        </div>
+
+        <div id="categoryRow" class="category-row">
+          <button class="category-button active" data-category="全部">全部</button>
+          <button class="category-button" data-category="旅行">✈️ 旅行</button>
+          <button class="category-button" data-category="飲湯">🍲 飲湯</button>
+          <button class="category-button" data-category="食飯">🍚 食飯</button>
+          <button class="category-button" data-category="餐廳">🍽️ 餐廳</button>
+          <button class="category-button" data-category="購物">🛒 購物</button>
+          <button class="category-button" data-category="家庭">🏠 家庭</button>
+          <button class="category-button" data-category="其他">💕 其他</button>
+        </div>
+
+        <div id="loadingMessage" class="empty">
+          <span class="empty-emoji">🐰</span>
+          正在載入我哋嘅事項……
+        </div>
+
+        <div id="taskList" class="task-list"></div>
+
+        <div class="footer-note">
+          資料會在你同太太嘅手機之間即時同步 💗
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 新增事項視窗 -->
+  <div id="taskModal" class="modal hidden">
+    <div class="modal-card">
+
+      <div class="modal-header">
+        <h2 id="modalTitle">💕 新增跟進事項</h2>
+        <button id="closeModalButton" class="close-button">×</button>
+      </div>
+
+      <form id="taskForm">
+
+        <input id="editingId" type="hidden">
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label for="taskTitle">事項名稱 *</label>
+            <input
+              id="taskTitle"
+              class="field"
+              type="text"
+              placeholder="例如：預訂生日餐廳"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="taskCategory">種類</label>
+            <select id="taskCategory" class="field">
+              <option value="旅行">✈️ 旅行</option>
+              <option value="飲湯">🍲 飲湯</option>
+              <option value="食飯">🍚 食飯</option>
+              <option value="餐廳">🍽️ 餐廳</option>
+              <option value="購物">🛒 購物</option>
+              <option value="家庭">🏠 家庭</option>
+              <option value="其他">💕 其他</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="taskAssignee">邊個負責？</label>
+            <select id="taskAssignee" class="field">
+              <option value="老公">👨🏻 老公</option>
+              <option value="老婆">👩🏻 老婆</option>
+              <option value="一齊">👩🏻‍❤️‍👨🏻 一齊</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="taskDueDate">跟進日期</label>
+            <input id="taskDueDate" class="field" type="date">
+          </div>
+
+          <div class="form-group">
+            <label for="taskPriority">重要程度</label>
+            <select id="taskPriority" class="field">
+              <option value="普通">🌱 普通</option>
+              <option value="重要">⭐ 重要</option>
+              <option value="緊急">🔥 緊急</option>
+            </select>
+          </div>
+
+          <div class="form-group full">
+            <label for="taskDetails">詳細資料</label>
+            <textarea
+              id="taskDetails"
+              class="field"
+              placeholder="例如：餐廳名稱、地點、想食嘅嘢、訂位時間……"
+            ></textarea>
+          </div>
+
+        </div>
+
+        <button type="submit" class="primary-button save-button">
+          儲存事項 💕
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    /*
+      第一處需要修改：
+      將下面資料換成你 Firebase 顯示嘅 firebaseConfig。
+    */
+
+    const firebaseConfig = {
+      apiKey: "在這裡貼上你的API_KEY",
+      authDomain: "在這裡貼上你的AUTH_DOMAIN",
+      projectId: "在這裡貼上你的PROJECT_ID",
+      storageBucket: "在這裡貼上你的STORAGE_BUCKET",
+      messagingSenderId: "在這裡貼上你的MESSAGING_SENDER_ID",
+      appId: "在這裡貼上你的APP_ID"
+    };
+
+    /*
+      第二處需要修改：
+      輸入你同太太用嚟登入嘅 Google 電郵。
+      呢個只係控制畫面；真正保安仍然係 Firestore Rules。
+    */
+
+    const allowedEmails = [
+      "你的Google電郵@gmail.com",
+      "太太的Google電郵@gmail.com"
+    ];
+
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged
+    } from
+      "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      updateDoc,
+      deleteDoc,
+      doc,
+      onSnapshot,
+      query,
+      orderBy,
+      serverTimestamp
+    } from
+      "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+    const provider = new GoogleAuthProvider();
+
+    const loginScreen = document.getElementById("loginScreen");
+    const loginButton = document.getElementById("loginButton");
+    const loginError = document.getElementById("loginError");
+    const appElement = document.getElementById("app");
+    const signoutButton = document.getElementById("signoutButton");
+
+    const userPhoto = document.getElementById("userPhoto");
+    const userName = document.getElementById("userName");
+
+    const taskList = document.getElementById("taskList");
+    const loadingMessage = document.getElementById("loadingMessage");
+
+    const totalCount = document.getElementById("totalCount");
+    const pendingCount = document.getElementById("pendingCount");
+    const doneCount = document.getElementById("doneCount");
+
+    const searchInput = document.getElementById("searchInput");
+    const assigneeFilter = document.getElementById("assigneeFilter");
+    const categoryRow = document.getElementById("categoryRow");
+
+    const taskModal = document.getElementById("taskModal");
+    const openModalButton = document.getElementById("openModalButton");
+    const closeModalButton = document.getElementById("closeModalButton");
+    const taskForm = document.getElementById("taskForm");
+    const modalTitle = document.getElementById("modalTitle");
+
+    const editingId = document.getElementById("editingId");
+    const taskTitle = document.getElementById("taskTitle");
+    const taskCategory = document.getElementById("taskCategory");
+    const taskAssignee = document.getElementById("taskAssignee");
+    const taskDueDate = document.getElementById("taskDueDate");
+    const taskPriority = document.getElementById("taskPriority");
+    const taskDetails = document.getElementById("taskDetails");
+
+    let currentUser = null;
+    let allTasks = [];
+    let selectedCategory = "全部";
+    let unsubscribeTasks = null;
+
+    const categoryEmoji = {
+      "旅行": "✈️",
+      "飲湯": "🍲",
+      "食飯": "🍚",
+      "餐廳": "🍽️",
+      "購物": "🛒",
+      "家庭": "🏠",
+      "其他": "💕"
+    };
+
+    function escapeHtml(value = "") {
+      const div = document.createElement("div");
+      div.textContent = value;
+      return div.innerHTML;
+    }
+
+    function showError(message) {
+      loginError.textContent = message;
+      loginError.classList.remove("hidden");
+    }
+
+    loginButton.addEventListener("click", async () => {
+      loginError.classList.add("hidden");
+
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (error) {
+        console.error(error);
+        showError("登入失敗，請再試一次。請確認瀏覽器冇封鎖彈出視窗。");
+      }
+    });
+
+    signoutButton.addEventListener("click", async () => {
+      await signOut(auth);
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        currentUser = null;
+
+        if (unsubscribeTasks) {
+          unsubscribeTasks();
+          unsubscribeTasks = null;
+        }
+
+        appElement.classList.add("hidden");
+        loginScreen.classList.remove("hidden");
+        return;
+      }
+
+      const email = (user.email || "").toLowerCase();
+      const approvedEmails = allowedEmails.map(item => item.toLowerCase());
+
+      if (!approvedEmails.includes(email)) {
+        showError("呢個 Google 帳戶未獲准使用網站。請用指定帳戶登入。");
+        await signOut(auth);
+        return;
+      }
+
+      currentUser = user;
+
+      userName.textContent = user.displayName || user.email;
+      userPhoto.src =
+        user.photoURL ||
+        "https://ui-avatars.com/api/?background=ffffff&color=db4f79&name=Love";
+
+      loginScreen.classList.add("hidden");
+      appElement.classList.remove("hidden");
+
+      subscribeToTasks();
+    });
+
+    function subscribeToTasks() {
+      if (unsubscribeTasks) {
+        unsubscribeTasks();
+      }
+
+      const tasksQuery = query(
+        collection(db, "tasks"),
+        orderBy("createdAt", "desc")
+      );
+
+      unsubscribeTasks = onSnapshot(
+        tasksQuery,
+        snapshot => {
+          allTasks = snapshot.docs.map(document => ({
+            id: document.id,
+            ...document.data()
+          }));
+
+          loadingMessage.classList.add("hidden");
+          updateStats();
+          renderTasks();
+        },
+        error => {
+          console.error(error);
+          loadingMessage.innerHTML = `
+            <span class="empty-emoji">😿</span>
+            無法讀取資料。請檢查 Firebase Rules、電郵地址同設定。
+          `;
+          loadingMessage.classList.remove("hidden");
+        }
+      );
+    }
+
+    function updateStats() {
+      const completed = allTasks.filter(task => task.done).length;
+
+      totalCount.textContent = allTasks.length;
+      pendingCount.textContent = allTasks.length - completed;
+      doneCount.textContent = completed;
+    }
+
+    function isOverdue(task) {
+      if (!task.dueDate || task.done) {
+        return false;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const dueDate = new Date(task.dueDate + "T00:00:00");
+      return dueDate < today;
+    }
+
+    function renderTasks() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const selectedAssignee = assigneeFilter.value;
+
+      const filteredTasks = allTasks.filter(task => {
+        const searchableText = [
+          task.title,
+          task.details,
+          task.category,
+          task.assignee
+        ].join(" ").toLowerCase();
+
+        const matchesSearch =
+          !keyword || searchableText.includes(keyword);
+
+        const matchesCategory =
+          selectedCategory === "全部" ||
+          task.category === selectedCategory;
+
+        const matchesAssignee =
+          selectedAssignee === "全部" ||
+          task.assignee === selectedAssignee;
+
+        return matchesSearch && matchesCategory && matchesAssignee;
+      });
+
+      if (filteredTasks.length === 0) {
+        taskList.innerHTML = `
+          <div class="empty">
+            <span class="empty-emoji">🐣</span>
+            暫時未有符合條件嘅事項。<br>
+            不如新增第一件甜蜜任務啦！
+          </div>
+        `;
+        return;
+      }
+
+      taskList.innerHTML = filteredTasks.map(task => {
+        const overdue = isOverdue(task);
+        const emoji = categoryEmoji[task.category] || "💕";
+
+        return `
+          <article class="task-card ${task.done ? "done" : ""}">
+            <button
+              class="complete-button"
+              data-action="toggle"
+              data-id="${task.id}"
+              title="完成／重新開啟"
+            >
+              ${task.done ? "✓" : ""}
+            </button>
+
+            <div>
+              <h3 class="task-title">
+                ${emoji} ${escapeHtml(task.title)}
+              </h3>
+
+              ${
+                task.details
+                  ? `<p class="task-details">${escapeHtml(task.details)}</p>`
+                  : ""
+              }
+
+              <span class="tag">
+                ${escapeHtml(task.category || "其他")}
+              </span>
+
+              <span class="tag">
+                👤 ${escapeHtml(task.assignee || "一齊")}
+              </span>
+
+              <span class="tag">
+                ${escapeHtml(task.priority || "普通")}
+              </span>
+
+              ${
+                task.dueDate
+                  ? `
+                    <span class="tag ${overdue ? "due-overdue" : ""}">
+                      📅 ${escapeHtml(task.dueDate)}
+                      ${overdue ? "・已過期" : ""}
+                    </span>
+                  `
+                  : ""
+              }
+
+              ${
+                task.createdBy
+                  ? `
+                    <span class="tag">
+                      ✍🏻 ${escapeHtml(task.createdByName || task.createdBy)}
+                    </span>
+                  `
+                  : ""
+              }
+            </div>
+
+            <div class="task-actions">
+              <button
+                class="small-button"
+                data-action="edit"
+                data-id="${task.id}"
+                title="修改"
+              >
+                ✏️
+              </button>
+
+              <button
+                class="small-button delete-button"
+                data-action="delete"
+                data-id="${task.id}"
+                title="刪除"
+              >
+                🗑️
+              </button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    taskList.addEventListener("click", async event => {
+      const button = event.target.closest("[data-action]");
+
+      if (!button) {
+        return;
+      }
+
+      const taskId = button.dataset.id;
+      const action = button.dataset.action;
+      const task = allTasks.find(item => item.id === taskId);
+
+      if (!task) {
+        return;
+      }
+
+      if (action === "toggle") {
+        await updateDoc(doc(db, "tasks", taskId), {
+          done: !task.done,
+          updatedAt: serverTimestamp(),
+          updatedBy: currentUser.email
+        });
+      }
+
+      if (action === "edit") {
+        openEditModal(task);
+      }
+
+      if (action === "delete") {
+        const confirmed = confirm(
+          `確定刪除「${task.title}」嗎？`
+        );
+
+        if (confirmed) {
+          await deleteDoc(doc(db, "tasks", taskId));
+        }
+      }
+    });
+
+    function openNewModal() {
+      taskForm.reset();
+      editingId.value = "";
+      modalTitle.textContent = "💕 新增跟進事項";
+      taskAssignee.value = "老公";
+      taskPriority.value = "普通";
+      taskModal.classList.remove("hidden");
+      taskTitle.focus();
+    }
+
+    function openEditModal(task) {
+      editingId.value = task.id;
+      taskTitle.value = task.title || "";
+      taskCategory.value = task.category || "其他";
+      taskAssignee.value = task.assignee || "一齊";
+      taskDueDate.value = task.dueDate || "";
+      taskPriority.value = task.priority || "普通";
+      taskDetails.value = task.details || "";
+
+      modalTitle.textContent = "✏️ 修改跟進事項";
+      taskModal.classList.remove("hidden");
+      taskTitle.focus();
+    }
+
+    function closeModal() {
+      taskModal.classList.add("hidden");
+      taskForm.reset();
+      editingId.value = "";
+    }
+
+    openModalButton.addEventListener("click", openNewModal);
+    closeModalButton.addEventListener("click", closeModal);
+
+    taskModal.addEventListener("click", event => {
+      if (event.target === taskModal) {
+        closeModal();
+      }
+    });
+
+    taskForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const title = taskTitle.value.trim();
+
+      if (!title) {
+        return;
+      }
+
+      const taskData = {
+        title,
+        category: taskCategory.value,
+        assignee: taskAssignee.value,
+        dueDate: taskDueDate.value,
+        priority: taskPriority.value,
+        details: taskDetails.value.trim(),
+        updatedAt: serverTimestamp(),
+        updatedBy: currentUser.email
+      };
+
+      try {
+        if (editingId.value) {
+          await updateDoc(
+            doc(db, "tasks", editingId.value),
+            taskData
+          );
+        } else {
+          await addDoc(collection(db, "tasks"), {
+            ...taskData,
+            done: false,
+            createdAt: serverTimestamp(),
+            createdBy: currentUser.email,
+            createdByName:
+              currentUser.displayName || currentUser.email
+          });
+        }
+
+        closeModal();
+      } catch (error) {
+        console.error(error);
+        alert("未能儲存事項，請檢查網絡或 Firebase 設定。");
+      }
+    });
+
+    searchInput.addEventListener("input", renderTasks);
+    assigneeFilter.addEventListener("change", renderTasks);
+
+    categoryRow.addEventListener("click", event => {
+      const button = event.target.closest("[data-category]");
+
+      if (!button) {
+        return;
+      }
+
+      selectedCategory = button.dataset.category;
+
+      document
+        .querySelectorAll(".category-button")
+        .forEach(item => item.classList.remove("active"));
+
+      button.classList.add("active");
+      renderTasks();
+    });
+  </script>
+
+</body>
+</html>
