@@ -518,6 +518,7 @@
 
     // 登入（全部用跳轉，iPhone 最穩定）
 loginButton.addEventListener("click", async () => {
+  alert("按鈕有反應！準備跳去 Google");
   loginError.classList.add("hidden");
   try {
     await signInWithRedirect(auth, provider);
@@ -526,7 +527,6 @@ loginButton.addEventListener("click", async () => {
     showError("登入失敗，請再試一次。");
   }
 });
-
     // 處理手機跳轉登入結果（好重要）
     getRedirectResult(auth).catch((error) => {
       console.error(error);
