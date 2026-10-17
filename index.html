@@ -33,7 +33,6 @@
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
     .hidden { display: none !important; }
-
     .login-screen {
       min-height: 100vh;
       display: flex;
@@ -71,7 +70,6 @@
       background: #ffe7ea;
       border-radius: 12px;
     }
-
     .hero {
       padding: 32px 18px 48px;
       color: white;
@@ -102,7 +100,6 @@
       border: 1px solid rgba(255, 255, 255, 0.6);
       border-radius: 12px;
     }
-
     main {
       width: min(calc(100% - 28px), 1050px);
       margin: -25px auto 70px;
@@ -129,7 +126,6 @@
     }
     .stat strong { display: block; color: var(--pink-dark); font-size: 1.8rem; }
     .stat span { color: var(--muted); font-size: 0.9rem; }
-
     .toolbar {
       display: grid;
       grid-template-columns: 1fr 180px auto;
@@ -159,7 +155,6 @@
       border-radius: 13px;
       box-shadow: 0 7px 16px rgba(219, 79, 121, 0.2);
     }
-
     .category-row {
       display: flex;
       gap: 8px;
@@ -180,7 +175,6 @@
       background: var(--pink);
       border-color: var(--pink);
     }
-
     .task-list { display: grid; gap: 14px; }
     .task-card {
       display: grid;
@@ -233,7 +227,6 @@
       text-align: center;
     }
     .empty-emoji { display: block; margin-bottom: 8px; font-size: 3rem; }
-
     .modal {
       position: fixed;
       inset: 0;
@@ -285,7 +278,6 @@
       text-align: center;
       font-size: 0.9rem;
     }
-
     @media (max-width: 700px) {
       .toolbar { grid-template-columns: 1fr; }
       .task-card { grid-template-columns: auto 1fr; }
@@ -297,7 +289,6 @@
   </style>
 </head>
 <body>
-
   <section id="loginScreen" class="login-screen">
     <div class="login-card">
       <div class="login-emoji">👶🏻💕</div>
@@ -307,7 +298,6 @@
       <div id="loginError" class="login-error hidden"></div>
     </div>
   </section>
-
   <div id="app" class="hidden">
     <header class="hero">
       <div class="hero-inner">
@@ -323,7 +313,6 @@
         <p>一齊記低，一齊完成，一齊食好西 😘</p>
       </div>
     </header>
-
     <main>
       <section class="panel">
         <div class="stats">
@@ -331,7 +320,6 @@
           <div class="stat"><strong id="pendingCount">0</strong><span>有待跟進</span></div>
           <div class="stat"><strong id="doneCount">0</strong><span>已經完成</span></div>
         </div>
-
         <div class="toolbar">
           <input id="searchInput" class="field" type="search" placeholder="🔍 搜尋事項、餐廳或地點">
           <select id="assigneeFilter" class="field">
@@ -342,7 +330,6 @@
           </select>
           <button id="openModalButton" class="primary-button">＋ 新增事項</button>
         </div>
-
         <div id="categoryRow" class="category-row">
           <button class="category-button active" data-category="全部">全部</button>
           <button class="category-button" data-category="旅行">✈️ 旅行</button>
@@ -353,7 +340,6 @@
           <button class="category-button" data-category="家庭">🏠 家庭</button>
           <button class="category-button" data-category="其他">💕 其他</button>
         </div>
-
         <div id="loadingMessage" class="empty">
           <span class="empty-emoji">🐰</span>
           正在載入我哋嘅事項……
@@ -363,7 +349,6 @@
       </section>
     </main>
   </div>
-
   <div id="taskModal" class="modal hidden">
     <div class="modal-card">
       <div class="modal-header">
@@ -418,7 +403,6 @@
       </form>
     </div>
   </div>
-
   <script type="module">
     const firebaseConfig = {
       apiKey: "AIzaSyB2Viuz7YeTrd8t_Iu7fPAhrrbqu1TwL5M",
@@ -429,12 +413,10 @@
       appId: "1:316443740801:web:fcd53e0b6b186f7c0d5b80",
       measurementId: "G-ZL5STCBY9S"
     };
-
     const allowedEmails = [
       "terence.sanyu@gmail.com",
       "charlottelau42@gmail.com"
     ];
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
       getAuth,
@@ -457,12 +439,10 @@
       orderBy,
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
     const firebaseApp = initializeApp(firebaseConfig);
     const auth = getAuth(firebaseApp);
     const db = getFirestore(firebaseApp);
     const provider = new GoogleAuthProvider();
-
     const loginScreen = document.getElementById("loginScreen");
     const loginButton = document.getElementById("loginButton");
     const loginError = document.getElementById("loginError");
@@ -490,53 +470,40 @@
     const taskDueDate = document.getElementById("taskDueDate");
     const taskPriority = document.getElementById("taskPriority");
     const taskDetails = document.getElementById("taskDetails");
-
     let currentUser = null;
     let allTasks = [];
     let selectedCategory = "全部";
     let unsubscribeTasks = null;
-
     const categoryEmoji = {
       "旅行": "✈️", "飲湯": "🍲", "食飯": "🍚", "餐廳": "🍽️",
       "購物": "🛒", "家庭": "🏠", "其他": "💕"
     };
-
     function escapeHtml(value = "") {
       const div = document.createElement("div");
       div.textContent = value;
       return div.innerHTML;
     }
-
     function showError(message) {
       loginError.textContent = message;
       loginError.classList.remove("hidden");
     }
-
-    function isMobile() {
-      return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    }
-
-    // 登入（全部用跳轉，iPhone 最穩定）
-loginButton.addEventListener("click", async () => {
-  alert("按鈕有反應！準備跳去 Google");
-  loginError.classList.add("hidden");
-  try {
-    await signInWithRedirect(auth, provider);
-  } catch (error) {
-    console.error(error);
-    showError("登入失敗，請再試一次。");
-  }
-});
-    // 處理手機跳轉登入結果（好重要）
+    loginButton.addEventListener("click", async () => {
+      alert("按鈕有反應！準備跳去 Google");
+      loginError.classList.add("hidden");
+      try {
+        await signInWithRedirect(auth, provider);
+      } catch (error) {
+        console.error(error);
+        showError("登入失敗，請再試一次。");
+      }
+    });
     getRedirectResult(auth).catch((error) => {
       console.error(error);
       showError("登入失敗，請再試一次。");
     });
-
     signoutButton.addEventListener("click", async () => {
       await signOut(auth);
     });
-
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         currentUser = null;
@@ -548,16 +515,13 @@ loginButton.addEventListener("click", async () => {
         loginScreen.classList.remove("hidden");
         return;
       }
-
       const email = (user.email || "").toLowerCase();
       const approvedEmails = allowedEmails.map(item => item.toLowerCase());
-
       if (!approvedEmails.includes(email)) {
         showError("呢個 Google 帳戶未獲准使用網站。請用指定帳戶登入。");
         await signOut(auth);
         return;
       }
-
       currentUser = user;
       userName.textContent = user.displayName || user.email;
       userPhoto.src = user.photoURL || "https://ui-avatars.com/api/?background=ffffff&color=db4f79&name=Love";
@@ -565,12 +529,9 @@ loginButton.addEventListener("click", async () => {
       appElement.classList.remove("hidden");
       subscribeToTasks();
     });
-
     function subscribeToTasks() {
       if (unsubscribeTasks) unsubscribeTasks();
-
       const tasksQuery = query(collection(db, "tasks"), orderBy("createdAt", "desc"));
-
       unsubscribeTasks = onSnapshot(tasksQuery, snapshot => {
         allTasks = snapshot.docs.map(document => ({
           id: document.id,
@@ -585,14 +546,12 @@ loginButton.addEventListener("click", async () => {
         loadingMessage.classList.remove("hidden");
       });
     }
-
     function updateStats() {
       const completed = allTasks.filter(task => task.done).length;
       totalCount.textContent = allTasks.length;
       pendingCount.textContent = allTasks.length - completed;
       doneCount.textContent = completed;
     }
-
     function isOverdue(task) {
       if (!task.dueDate || task.done) return false;
       const today = new Date();
@@ -600,11 +559,9 @@ loginButton.addEventListener("click", async () => {
       const dueDate = new Date(task.dueDate + "T00:00:00");
       return dueDate < today;
     }
-
     function renderTasks() {
       const keyword = searchInput.value.trim().toLowerCase();
       const selectedAssignee = assigneeFilter.value;
-
       const filteredTasks = allTasks.filter(task => {
         const searchableText = [task.title, task.details, task.category, task.assignee].join(" ").toLowerCase();
         const matchesSearch = !keyword || searchableText.includes(keyword);
@@ -612,12 +569,10 @@ loginButton.addEventListener("click", async () => {
         const matchesAssignee = selectedAssignee === "全部" || task.assignee === selectedAssignee;
         return matchesSearch && matchesCategory && matchesAssignee;
       });
-
       if (filteredTasks.length === 0) {
         taskList.innerHTML = `<div class="empty"><span class="empty-emoji">🐣</span>暫時未有符合條件嘅事項。<br>不如新增第一件甜蜜任務啦！</div>`;
         return;
       }
-
       taskList.innerHTML = filteredTasks.map(task => {
         const overdue = isOverdue(task);
         const emoji = categoryEmoji[task.category] || "💕";
@@ -642,7 +597,6 @@ loginButton.addEventListener("click", async () => {
         `;
       }).join("");
     }
-
     taskList.addEventListener("click", async event => {
       const button = event.target.closest("[data-action]");
       if (!button) return;
@@ -650,7 +604,6 @@ loginButton.addEventListener("click", async () => {
       const action = button.dataset.action;
       const task = allTasks.find(item => item.id === taskId);
       if (!task) return;
-
       if (action === "toggle") {
         await updateDoc(doc(db, "tasks", taskId), {
           done: !task.done,
@@ -665,7 +618,6 @@ loginButton.addEventListener("click", async () => {
         }
       }
     });
-
     function openNewModal() {
       taskForm.reset();
       editingId.value = "";
@@ -675,7 +627,6 @@ loginButton.addEventListener("click", async () => {
       taskModal.classList.remove("hidden");
       taskTitle.focus();
     }
-
     function openEditModal(task) {
       editingId.value = task.id;
       taskTitle.value = task.title || "";
@@ -688,24 +639,20 @@ loginButton.addEventListener("click", async () => {
       taskModal.classList.remove("hidden");
       taskTitle.focus();
     }
-
     function closeModal() {
       taskModal.classList.add("hidden");
       taskForm.reset();
       editingId.value = "";
     }
-
     openModalButton.addEventListener("click", openNewModal);
     closeModalButton.addEventListener("click", closeModal);
     taskModal.addEventListener("click", event => {
       if (event.target === taskModal) closeModal();
     });
-
     taskForm.addEventListener("submit", async event => {
       event.preventDefault();
       const title = taskTitle.value.trim();
       if (!title) return;
-
       const taskData = {
         title,
         category: taskCategory.value,
@@ -716,7 +663,6 @@ loginButton.addEventListener("click", async () => {
         updatedAt: serverTimestamp(),
         updatedBy: currentUser.email
       };
-
       try {
         if (editingId.value) {
           await updateDoc(doc(db, "tasks", editingId.value), taskData);
@@ -735,12 +681,16 @@ loginButton.addEventListener("click", async () => {
         alert("未能儲存事項，請檢查網絡或 Firebase 設定。");
       }
     });
-
     searchInput.addEventListener("input", renderTasks);
     assigneeFilter.addEventListener("change", renderTasks);
-
     categoryRow.addEventListener("click", event => {
       const button = event.target.closest("[data-category]");
       if (!button) return;
       selectedCategory = button.dataset.category;
       document.querySelectorAll(".category-button").forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+      renderTasks();
+    });
+  </script>
+</body>
+</html>
