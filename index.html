@@ -516,20 +516,16 @@
       return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     }
 
-    // 登入：手機用跳轉，電腦用彈出視窗
-    loginButton.addEventListener("click", async () => {
-      loginError.classList.add("hidden");
-      try {
-        if (isMobile()) {
-          await signInWithRedirect(auth, provider);
-        } else {
-          await signInWithPopup(auth, provider);
-        }
-      } catch (error) {
-        console.error(error);
-        showError("登入失敗，請再試一次。");
-      }
-    });
+    // 登入（全部用跳轉，iPhone 最穩定）
+loginButton.addEventListener("click", async () => {
+  loginError.classList.add("hidden");
+  try {
+    await signInWithRedirect(auth, provider);
+  } catch (error) {
+    console.error(error);
+    showError("登入失敗，請再試一次。");
+  }
+});
 
     // 處理手機跳轉登入結果（好重要）
     getRedirectResult(auth).catch((error) => {
