@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>靚靚老婆跟進站</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="跟進站">
+  <link rel="manifest" href="manifest.json">
   <style>
     :root {
       --pink: #ff7198;
@@ -226,7 +229,28 @@
       color: var(--muted);
       text-align: center;
     }
-    .empty-emoji { display: block; margin-bottom: 8px; font-size: 3rem; }
+    .squirrel-orbit {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 4px;
+      position: relative;
+    }
+    .squirrel-orbit img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 84px;
+      height: 84px;
+      margin: -42px 0 0 -42px;
+      object-fit: contain;
+      border-radius: 0;
+      background: transparent;
+      animation: squirrel-run 1.15s linear infinite;
+    }
+    @keyframes squirrel-run {
+      from { transform: rotate(0deg) translateX(46px) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(46px) rotate(-360deg); }
+    }
     .modal {
       position: fixed;
       inset: 0;
@@ -306,6 +330,7 @@
           <div class="user-area">
             <img id="userPhoto" class="user-photo" alt="用戶相片">
             <span id="userName" class="user-name"></span>
+            <button id="notifyButton" class="signout-button">開啟提示</button>
             <button id="signoutButton" class="signout-button">登出</button>
           </div>
         </div>
@@ -341,8 +366,8 @@
           <button class="category-button" data-category="其他">💕 其他</button>
         </div>
         <div id="loadingMessage" class="empty">
-          <span class="empty-emoji">🐰</span>
-          正在載入我哋嘅事項……
+          <div class="squirrel-orbit" aria-hidden="true"><img src="momka.png" alt=""></div>
+          飛鼠跑緊圈，載入事項中……
         </div>
         <div id="taskList" class="task-list"></div>
         <div class="footer-note">資料會在你同太太嘅手機之間即時同步 💗</div>
@@ -448,6 +473,7 @@
     const loginError = document.getElementById("loginError");
     const appElement = document.getElementById("app");
     const signoutButton = document.getElementById("signoutButton");
+    const notifyButton = document.getElementById("notifyButton");
     const userPhoto = document.getElementById("userPhoto");
     const userName = document.getElementById("userName");
     const taskList = document.getElementById("taskList");
@@ -473,7 +499,7 @@
     let currentUser = null;
     let allTasks = [];
     let selectedCategory = "全部";
-    let unsubscribeTasks = null;
+    let seenTaskIds = null;
     const categoryEmoji = {
       "旅行": "✈️", "飲湯": "🍲", "食飯": "🍚", "餐廳": "🍽️",
       "購物": "🛒", "家庭": "🏠", "其他": "💕"
@@ -488,7 +514,6 @@
       loginError.classList.remove("hidden");
     }
     loginButton.addEventListener("click", async () => {
-      alert("按鈕有反應！準備跳去 Google");
       loginError.classList.add("hidden");
       try {
         await signInWithRedirect(auth, provider);
@@ -507,6 +532,7 @@
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         currentUser = null;
+        seenTaskIds = null;
         if (unsubscribeTasks) {
           unsubscribeTasks();
           unsubscribeTasks = null;
@@ -527,8 +553,56 @@
       userPhoto.src = user.photoURL || "https://ui-avatars.com/api/?background=ffffff&color=db4f79&name=Love";
       loginScreen.classList.add("hidden");
       appElement.classList.remove("hidden");
+      setupNotifications();
       subscribeToTasks();
     });
+    function canNotify() {
+      return "Notification" in window && Notification.permission === "granted" && localStorage.getItem("notifyOn") === "1";
+    }
+    function refreshNotifyButton() {
+      if (!("Notification" in window)) {
+        notifyButton.textContent = "此手機不支援提示";
+        return;
+      }
+      notifyButton.textContent = canNotify() ? "提示已開" : "開啟提示";
+    }
+    async function setupNotifications() {
+      refreshNotifyButton();
+      if ("serviceWorker" in navigator) {
+        try { await navigator.serviceWorker.register("sw.js"); } catch (error) { console.error(error); }
+      }
+      maybeDailyReminder();
+    }
+    notifyButton.addEventListener("click", async () => {
+      if (!("Notification" in window)) {
+        alert("請先用 Safari「分享 → 加入主畫面」，再用主畫面圖示打開。");
+        return;
+      }
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        alert("未允許通知。請到 iPhone 設定 → 通知 → 跟進站 開啟。");
+        return;
+      }
+      localStorage.setItem("notifyOn", "1");
+      refreshNotifyButton();
+      new Notification("跟進站", { body: "之後有新事項，打開住個 App 就會提示。" });
+    });
+    function maybeDailyReminder() {
+      if (!canNotify()) return;
+      const key = "daily-" + new Date().toISOString().slice(0, 10);
+      const hour = new Date().getHours();
+      if (hour >= 10 && !localStorage.getItem(key)) {
+        localStorage.setItem(key, "1");
+        new Notification("今日跟進", { body: "早晨，打開跟進站睇下今日有咩要做。" });
+      }
+    }
+    function notifyNewTasks(tasks) {
+      if (!canNotify() || !currentUser) return;
+      const fresh = tasks.filter(task => !seenTaskIds.has(task.id) && task.createdBy && task.createdBy !== currentUser.email);
+      fresh.forEach(task => {
+        new Notification("有新事項", { body: (task.createdByName || "另一半") + "： " + (task.title || "新任務") });
+      });
+    }
     function subscribeToTasks() {
       if (unsubscribeTasks) unsubscribeTasks();
       const tasksQuery = query(collection(db, "tasks"), orderBy("createdAt", "desc"));
@@ -537,6 +611,8 @@
           id: document.id,
           ...document.data()
         }));
+        if (seenTaskIds) notifyNewTasks(allTasks);
+        seenTaskIds = new Set(allTasks.map(task => task.id));
         loadingMessage.classList.add("hidden");
         updateStats();
         renderTasks();
